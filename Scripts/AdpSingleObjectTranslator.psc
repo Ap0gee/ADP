@@ -5,7 +5,7 @@ import AdpUtils
 ;-----------------------------------------------------------------------------@[props]
 
 Bool Property ShareProperties = False Auto
-ObjectReference  Property ObjectRef Auto Hidden
+ObjectReference Property ObjectRef Auto Hidden
 
 ;-----------------------------------------------------------------------------@[methods]
 

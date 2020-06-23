@@ -20,13 +20,13 @@ Function verifyDelays()
 	if (ReActivationDelay < 1.1)
 		ReActivationDelay = 1.1
 	endif
-	if (ReEnableDelay <1.1)
+	if (ReEnableDelay < 1.1)
 		ReEnableDelay = 1.1
 	endif
 endFunction
 
 Function init()
-	if !Initialized
+	if ! Initialized
 		verifyDelays()
 		debug.trace("*ReActivationDelay" + ReActivationDelay)
 		debug.trace("*ReEnableDelay" + ReEnableDelay)
@@ -41,7 +41,7 @@ auto State waiting
 
 	Event onActivate(objectReference triggerRef)
 		init()
-		Slave.activate(self)
+		self.Slave.activate(self)
 		goToState("countdown")
 	endEvent
 endState

@@ -8,40 +8,62 @@ Bool Property ShareProperties = True Auto
 Bool Property InheritProperties =True Auto
 Bool Property NoRotateUntilArrival = False Auto
 Float Property WaitOnArrivalSeconds Auto
-ObjectReference  Property ObjectRef Auto Hidden
+ObjectReference Property ObjectRef Auto Hidden
+ObjectReference Property ActivateRef Auto Hidden
+Bool Property CSFadeTo = False auto 
+ImageSpaceModifier Property FadeTo Auto Hidden
+ImageSpaceModifier Property FadeFrom Auto Hidden
 
 ;-----------------------------------------------------------------------------@[methods]
 String Function getTranslatedRefType()
 	return "AdpTranslationMarker"
 endFunction
 
+Function setActivateRef()
+	IF ! self.ActivateRef
+		Keyword adpKeyword = Keyword.GetKeyword("AdpActivateRef0")
+		self.ActivateRef = self.GetLinkedRef(adpKeyword) as ObjectReference
+	ENDIF
+endFunction
+
 Function pullObjectRef()
-	self.translateObjectToSelf()
-	self.pollObjectXYZ()	
+	IF CSFadeTo
+		self.fadeObjectToSelf(1.0)
+	ELSE
+		self.translateObjectToSelf()
+		self.pollObjectXYZ()
+	ENDIF	
+endFunction
+
+Function fadeOut(float time)
+	FadeTo.Apply()
+	delay(time)
+	Game.FadeOutGame(False,True,50, 1)
+endFunction
+
+Function fadeIn(float time)
+	delay(time)
+	Game.FadeOutGame(False,True,0.1, 0.1)
+	FadeTo.PopTo(FadeFrom)
 endFunction
 
 Function translateObjectToSelf()
-	Float rotationSpeed
-	IF ! self.NoRotateUntilArrival
-		rotationSpeed = self.MaxRotationSpeed
-	ELSE
-		rotationSpeed = 0.1
-	ENDIF
 	IF ! self.TangentMagnitude
-		self.ObjectRef.TranslateToRef(self, self.Speed, rotationSpeed)
+		self.ObjectRef.TranslateToRef(self, self.Speed, self.MaxRotationSpeed)
 	ELSE	
-		self.ObjectRef.SplineTranslateToRef(self, self.TangentMagnitude, self.Speed, rotationSpeed)
+		self.ObjectRef.SplineTranslateToRef(self, self.TangentMagnitude, self.Speed, self.MaxRotationSpeed)
 	ENDIF
 endFunction
 
-Function rotateObjectToSelf()
-	Float rotationSpeed = 0.1
-	IF self.MaxRotationSpeed == rotationSpeed
-		rotationSpeed = 0.0
-	ELSE
-		rotationSpeed = self.MaxRotationSpeed	
-	ENDIF	
-	self.ObjectRef.TranslateToRef(self, self.Speed, rotationSpeed)
+Function fadeObjectToSelf(float time)
+	fadeOut(time)
+	self.ObjectRef.MoveTo(self, abMatchRotation=True)
+	fadeIn(time)
+	onTranslationComplete()
+endFunction	
+
+Function rotateObjectToSelf()	
+	self.ObjectRef.TranslateToRef(self, self.Speed, self.MaxRotationSpeed)
 endFunction 	
 
 Bool Function isXYZTranslationComplete()
@@ -66,11 +88,19 @@ Function maskObjectCollisionReset(ObjectReference objectRef)
 	self.setRefEnabledState(objectRef, True)
 	delay(0.5)
 	objectRefMask.Delete()
+endFunction
+
+ObjectReference Function placeCopy(ObjectReference objectRef)
+	Float refScale = objectRef.GetScale()
+	ObjectReference objectRefCopy = self.ObjectRef.PlaceAtMe(objectRef.GetBaseObject())
+	objectRefCopy.SetScale(refScale)
+	return objectRefCopy
 endFunction	
 
 ;-----------------------------------------------------------------------------@[events]
 
 Event  onLoad()
+	self.setActivateRef()
 	self.setDefaultRef()
 EndEvent
 
@@ -98,6 +128,10 @@ Event onTranslationComplete()
 	IF castedRef.isMultiObjectTranslator()
 		castedRef.Translating = False
 		castedRef.activate(self)
+	ELSE
+		IF self.ActivateRef
+			self.ActivateRef.activate(self)
+		ENDIF			
 	ENDIF
 	IF self.WaitOnArrivalSeconds
 		delay(self.WaitOnArrivalSeconds)
@@ -110,11 +144,13 @@ Event onTranslationComplete()
 			ENDIF
 			self.NextMarker.activate(self)
 		ELSE
-			IF  self.DefaultRef	
+			IF self.DefaultRef	
 				self.DefaultRef.activate(self)
 			ENDIF
 			IF self.ControllerRef.getTranslatedRefType() != "AdpCutSceneCreator"
-				self.maskObjectCollisionReset(self.ObjectRef)
+				IF ! self.NoCollisionReset
+					self.maskObjectCollisionReset(self.ObjectRef)
+				ENDIF	
 			ENDIF		
 		ENDIF
 	ENDIF

@@ -6,12 +6,13 @@ import utility
 ;-----------------------------------------------------------------------------@[props]
 
 Keyword Property AdpObjectRef0 Auto Hidden
+ObjectReference Property ObjectRef Auto Hidden
 
 ;-----------------------------------------------------------------------------@[methods]
 
 Function setDefaultRefs()
 	IF ! self.NextMarker
-		self.NextMarker  =  self.GetLinkedRef() as AdpTranslationMarker
+		self.NextMarker = self.GetLinkedRef() as AdpTranslationMarker
 	ENDIF
 endFunction
 

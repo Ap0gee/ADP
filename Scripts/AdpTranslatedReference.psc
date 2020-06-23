@@ -5,17 +5,18 @@ import AdpUtils
 AdpTranslationMarker Property NextMarker Auto Hidden
 Bool Property Translating = False Auto Hidden
 Float Property Speed = 0.0 Auto
-Float Property MaxRotationSpeed = 0.1 Auto
+Float Property MaxRotationSpeed = 0.0 Auto
 Float Property TangentMagnitude = 0.0 Auto
 AdpTranslatedReference Property ControllerRef Auto Hidden 
 Bool Property AbortedTranslation = False Auto Hidden
 AdpTranslationMarker Property CurrentMarker Auto Hidden
+Bool Property NoCollisionReset = False Auto
 
 Function setDefaultRef()
 	parent.setDefaultRef()
 	IF ! self.NextMarker
-		self.NextMarker  =  self.GetLinkedRef() as AdpTranslationMarker
-		IF self.NextMarker.getTranslatedRefType() == "AdpTranslationMarker"
+		self.NextMarker = self.GetLinkedRef() as AdpTranslationMarker
+		IF self.NextMarker && self.NextMarker.getTranslatedRefType() == "AdpTranslationMarker"
 			self.DefaultRef = self.NextMarker
 		ENDIF	
 	ENDIF
@@ -46,6 +47,7 @@ Function setNextMarkerProps()
 		self.NextMarker.Speed = self.Speed
 		self.NextMarker.MaxRotationSpeed = self.MaxRotationSpeed
 		self.NextMarker.TangentMagnitude = self.TangentMagnitude
+		self.NextMarker.NoCollisionReset = self.NoCollisionReset
 	ENDIF
 	self.NextMarker.ControllerRef = self.ControllerRef	
 endFunction

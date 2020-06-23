@@ -7,16 +7,17 @@ import debug
 ImageSpaceModifier Property FadeTo Auto Hidden
 ImageSpaceModifier Property FadeFrom Auto Hidden
 Bool Property InCutScene = False Auto Hidden
-Int  Property SkipHotKey  =28 Auto Hidden
-Bool  Property HidePlayer = True Auto
+Int Property SkipHotKey = 28 Auto Hidden
+Bool Property HidePlayer = True Auto
 Actor Property AdpCameraRef Auto Hidden
-Int  Property AdpCameraFormID  = 0x0010D13E Auto Hidden
-Float  Property ActorHomeX Auto Hidden
-Float  Property ActorHomeY Auto Hidden
-Float  Property ActorHomeZ Auto Hidden
-Float  Property ActorHomeAX Auto Hidden
-Float  Property ActorHomeAY Auto Hidden
-Float  Property ActorHomeAZ Auto Hidden
+Int Property AdpCameraFormID = 0x0010D13E Auto Hidden
+Float Property ActorHomeX Auto Hidden
+Float Property ActorHomeY Auto Hidden
+Float Property ActorHomeZ Auto Hidden
+Float Property ActorHomeAX Auto Hidden
+Float Property ActorHomeAY Auto Hidden
+Float Property ActorHomeAZ Auto Hidden
+Bool Property SkipAllowed = True Auto
 
 String Function getTranslatedRefType()
 	return "AdpCutSceneCreator"
@@ -79,8 +80,8 @@ Function setActorHome(Actor actorRef)
 	self.ActorHomeX  = actorRef.X
 	self.ActorHomeY  = actorRef.Y
 	self.ActorHomeZ  = actorRef.Z
-	self.ActorHomeAX   = actorRef.GetAngleX()
-	self.ActorHomeAY  = actorRef.GetAngleY()
+	self.ActorHomeAX = actorRef.GetAngleX()
+	self.ActorHomeAY = actorRef.GetAngleY()
 	self.ActorHomeAZ = actorRef.GetAngleZ()
 endFunction	
 
@@ -141,11 +142,13 @@ endEvent
 
 Event onUpdate()
 	IF self.InCutScene
-		debug.Notification("Hold Enter To Skip")
-		IF Input.IsKeyPressed(self.SkipHotKey)
-			self.abortTranslation()
-			self.endCutScene()
-		ENDIF	
+		IF SkipAllowed
+			debug.Notification("Hold Enter To Skip")
+			IF Input.IsKeyPressed(self.SkipHotKey)
+				self.abortTranslation()
+				self.endCutScene()
+			ENDIF	
+		ENDIF
 		RegisterForSingleUpdate(0.25)
 	ENDIF
 endEvent	

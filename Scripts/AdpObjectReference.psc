@@ -12,7 +12,7 @@ Bool  Property ShowDebug = False Auto
 ;-----------------------------------------------------------------------------@[methods]
 Function setDefaultRef()
 	IF ! self.DefaultRef 
-		self.DefaultRef  =  self.GetLinkedRef() 
+		self.DefaultRef = self.GetLinkedRef() 
 	ENDIF
 endFunction
 
@@ -80,8 +80,10 @@ Function enableRefArray(ObjectReference[] objectRefArray, Bool allowFade=False)
 	Int refCount = objectRefArray.Length
 	WHILE (refCount > 0)
 		Int index = refCount - 1
-		ObjectReference enableRef = objectRefArray[index] 
-		enableRef.Enable(allowFade)
+		ObjectReference enableRef = objectRefArray[index]
+		IF enableRef 
+			enableRef.Enable(allowFade)
+		ENDIF	
 		refCount -= 1
 	ENDWHILE
 endFunction
@@ -91,7 +93,9 @@ Function disableRefArray(ObjectReference[] objectRefArray, Bool allowFade=False)
 	WHILE (refCount > 0)
 		Int index = refCount - 1
 		ObjectReference enableRef = objectRefArray[index]
-		enableRef.Disable(allowFade)
+		IF enableRef
+			enableRef.Disable(allowFade)
+		ENDIF	
 		refCount -= 1
 	ENDWHILE
 endFunction
@@ -101,7 +105,9 @@ Function activateRefArray(ObjectReference[] objectRefArray)
 	WHILE (refCount > 0)
 		Int index = refCount - 1
 		ObjectReference enableRef = objectRefArray[index]
-		enableRef.activate(self)
+		IF enableRef
+			enableRef.activate(self)
+		ENDIF	
 		refCount -= 1
 	ENDWHILE
 endFunction

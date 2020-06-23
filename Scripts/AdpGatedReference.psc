@@ -43,8 +43,8 @@ endFunction
 
 Function gateConnect()
 	IF ! self.LogicGate
-		self.LogicGate =  self.GetLinkedRef() as AdpLogicGate
-		IF self.LogicGate.isAdpLogicGate()
+		self.LogicGate = self.GetLinkedRef() as AdpLogicGate
+		IF self.LogicGate && self.LogicGate.isAdpLogicGate()
 			IF self.InitiallyActivated
 				self.LogicGate.InitiallyActivated = True
 			ENDIF

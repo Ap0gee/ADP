@@ -2,15 +2,7 @@ Scriptname AdpReferenceActivator extends AdpActivator
 
 ;-----------------------------------------------------------------------------@[props]
 
-ObjectReference Property DefaultRef Auto Hidden
-
 ;-----------------------------------------------------------------------------@[methods]
-
-Function setDefaultRef()
-	IF ! self.DefaultRef
-		self.DefaultRef =  self.GetLinkedRef() 	
-	ENDIF
-endFunction 
 
 ;-----------------------------------------------------------------------------@[events]
 

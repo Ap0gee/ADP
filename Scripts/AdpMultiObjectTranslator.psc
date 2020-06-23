@@ -5,7 +5,7 @@ import AdpUtils
 ;-----------------------------------------------------------------------------@[props]
 
 Bool Property ShareProperties = False Auto
-ObjectReference[]  Property ObjectRefs Auto Hidden
+ObjectReference[] Property ObjectRefs Auto Hidden
 Float[] Property XPositionOffsets Auto Hidden
 Float[] Property YPositionOffsets Auto Hidden
 Float[] Property ZPositionOffsets Auto Hidden
